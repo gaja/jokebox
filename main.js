@@ -1,8 +1,10 @@
 (function() { 
   const splitChar = '~';
 
-  //dummy data -- replace with ajax data 
-  var quotesSet = [ "quote one.?author1", "quote two.?author2",
+  //dummy data -- as backup if ajax fails
+  var quotesSet = [ 
+    "quote one.   ~ author1", 
+    "quote two.   ~ author2",
     "quote three. ~ author3",
     "quote four.  ~ author4",
     "quote five.  ~ author5",
@@ -38,31 +40,39 @@
         // console.log('joke is here!');
         // console.log(data.value[0].joke);
         for(var i = 0, x = data.value.length;i<x;i++) {
-          // jokes.push(data.value[i].joke);
+          jokes.push(data.value[i].joke);
         }
       }
     });
 
-  function pickNumber(){
+  function pickNumber(jokes){
     return Math.floor(Math.random()*jokes.length);
   }
 
-  function pickQuote() {
-    return jokes[pickNumber()];
+  function pickQuote(dataset) {
+    return dataset[pickNumber(dataset)];
   }
 
   function separateQuoteFromAuthor() {
     return pickQuote().split(splitChar);
   }
 
+  function separateChosenQuoteFromAuthor(chosenQuote) {
+    return chosenQuote.split(splitChar);
+  }
+
+  function choseQotesType() {
+    var joke; 
+    if(jokes.length === 0) {
+      joke = quotesSet;
+      joke = pickQuote(joke);
+      joke = separateChosenQuoteFromAuthor(joke);
+    } else joke = pickQuote(jokes);
+    return joke;
+  }
+
   function displayQuote() {
-    var quote  = typeof quote === Object ? separateQuoteFromAuthor() : 
-      pickQuote();
-    if(typeof quote === Object) {
-      showArea.innerHTML = quote[0] + "\nBy: " + quote[1];
-    } else {
-      showArea.innerHTML = quote;
-    }
+    showArea.innerHTML = choseQotesType();
   }
 
   genQuotes.addEventListener('click', function(){
